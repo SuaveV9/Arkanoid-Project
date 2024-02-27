@@ -1,0 +1,256 @@
+<title>arkanoid game</title>
+
+<style>
+    body {
+        background: #111;
+    }
+
+    canvas {
+        border: 4px solid #fff;
+        border-bottom: transparent;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='448' height='400' preserveAspectRatio='none' viewBox='0 0 448 400'%3e%3cg mask='url(%26quot%3b%23SvgjsMask2232%26quot%3b)' fill='none'%3e%3crect width='448' height='400' x='0' y='0' fill='url(%26quot%3b%23SvgjsLinearGradient2233%26quot%3b)'%3e%3c/rect%3e%3cpath d='M265.14104240976945 55.12175989413372L222.08022095311085 147.46598951076453 357.48527202640025 98.1825813507923z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M225.1597067161552 363.3886854703261L263.48335479649245 277.3123625717248 177.40703189789116 238.98871449138753 139.0833838175539 325.06503738998885z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float3'%3e%3c/path%3e%3cpath d='M12.412778643616553 165.18390241963803L37.831841797268694 253.83071041058855 126.4786497882192 228.4116472569364 101.05958663456705 139.7648392659859z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M42.94596788378199 54.1865405245164L116.76972851597385 109.81673434272373 172.39992233418116 35.99297371053187 98.57616170198932-19.63722010767546z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M173.66644504599458 119.12847941358329L158.38894539747997 180.40318371594623 234.9411493483575 134.40597906209788z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float2'%3e%3c/path%3e%3cpath d='M120.85333470683554 193.34568443078132L41.51403075918756 137.79170573032687 65.29935600638109 272.6849883784293z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float3'%3e%3c/path%3e%3cpath d='M301.9300468716188 233.02713859629904L347.2423038264534 186.10492293330023 255.00783120862 187.71488164146442z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float1'%3e%3c/path%3e%3cpath d='M275.725616485556 274.31648861097733L384.6871082822745 283.84938390406313 285.2585117786418 165.35499681425884z' fill='rgba(28%2c 83%2c 142%2c 0.4)' class='triangle-float3'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask2232'%3e%3crect width='448' height='400' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='50%25' y1='0%25' x2='50%25' y2='100%25' gradientUnits='userSpaceOnUse' id='SvgjsLinearGradient2233'%3e%3cstop stop-color='rgba(14%2c 42%2c 71%2c 1)' offset='0'%3e%3c/stop%3e%3cstop stop-color='rgba(0%2c 0%2c 0%2c 1)' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3cstyle%3e %40keyframes float1 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-10px%2c 0)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float1 %7b animation: float1 5s infinite%3b %7d %40keyframes float2 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(-5px%2c -5px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float2 %7b animation: float2 4s infinite%3b %7d %40keyframes float3 %7b 0%25%7btransform: translate(0%2c 0)%7d 50%25%7btransform: translate(0%2c -10px)%7d 100%25%7btransform: translate(0%2c 0)%7d %7d .triangle-float3 %7b animation: float3 6s infinite%3b %7d %3c/style%3e%3c/defs%3e%3c/svg%3e");
+        margin: 0 auto;
+        display: block;
+    }
+</style>
+
+<canvas></canvas>
+
+<img hidden id="paddle" src="./Sprites/Arkanoid-paddle.png" alt="Arkanoid Paddle Sprite">
+<img hidden id="brick" src="./Sprites/Arkanoid-sprites.png" alt="Arkanoid Brick Sprite">
+
+<script>
+    const canvas = document.querySelector('canvas');
+    const ctx = canvas.getContext('2d'); // 2D rendering context
+
+    const $paddle = document.querySelector('#paddle');
+    const $brick = document.querySelector('#brick');
+    canvas.width = 448
+    canvas.height = 400
+
+    // Variables de la pelota
+    const ballRadius = 4
+    // Posicion de la pelota
+    let x = canvas.width / 2
+    let y = canvas.height - 30
+    // Velocidad de la pelota
+    let dx = 3
+    let dy = -3
+
+    // Variables de la paleta
+    const paddleHeight = 10;
+    const paddleWidth = 70;
+
+    let paddleX = (canvas.width - paddleWidth) / 2
+    let paddleY = (canvas.height - paddleHeight) - 10
+
+    let rightPressed = false
+    let leftPressed = false
+
+    // Variables de los ladrillos
+    const brickRowCount = 6;
+    const brickColumnCount = 8;
+    const brickWidth = 400 / 8;
+    const brickHeight = 15;
+    const brickPadding = 3;
+    const brickOffsetTop = 10;
+    const brickOffsetLeft = 13;
+    const bricks = [];
+
+    const BRICK_STATUS = {
+        ACTIVE: 1,
+        DESTROYED: 0
+    }
+
+    for (let c = 0; c < brickColumnCount; c++) {
+        bricks[c] = [] // Inicializamos con un array vacio
+
+        for (let r = 0; r < brickRowCount; r++) {
+            // Calculamos la posicion del ladrillo en la pantalla
+            const brickX = c * (brickWidth + brickPadding) + brickOffsetLeft
+
+            const brickY = r * (brickHeight + brickPadding) + brickOffsetTop
+            // Asignar un color aleatorio a cada ladrillo
+            const random = Math.floor(Math.random() * 2)
+            // Este truco es bastante importante que lo tengas en la memoria
+            //Guardamos la informacion de cada ladrillo
+            bricks[c][r] = {
+                x: brickX,
+                y: brickY,
+                status: BRICK_STATUS.ACTIVE,
+                color: random
+            }
+        }
+    }
+
+    const PADDLE_SENSITIVITY = 5
+
+    function drawBall() {
+        ctx.beginPath() // Iniciar el trazado
+        ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
+        ctx.fillStyle = '#fff'
+        ctx.fill()
+        ctx.closePath() // Finalizar el trazado
+    }
+    function drawPaddle() {
+        ctx.drawImage(
+            $paddle,
+            11, // ClipX: cordenadas de recorte
+            250, // ClipY: cordenadas de recorte
+            paddleWidth, // Tamaño del ancho del recorte
+            paddleHeight, // Tamaño del alto del recorte
+            paddleX, // Posicion X del dibujo
+            paddleY, // Posicion Y del dibujo
+            paddleWidth, // Ancho del dibujo
+            paddleHeight // Altura del dibujo
+        )
+    }
+    function drawBricks() {
+        for (let c = 0; c < brickColumnCount; c++) {
+            for (let r = 0; r < brickRowCount; r++) {
+                const currentBrick = bricks[c][r]
+                if (currentBrick.status === BRICK_STATUS.DESTROYED) continue
+
+                /* ctx.fillStyle = 'yellow'
+                ctx.rect(
+                    currentBrick.x,
+                    currentBrick.y,
+                    brickWidth,
+                    brickHeight
+                )
+                ctx.strokeStyle = '#000'
+                ctx.stroke()
+                ctx.fill() */
+
+                const clipX = currentBrick.color * 18
+                const clipY = currentBrick.color * 8
+                ctx.drawImage(
+                    $brick,
+                    clipX,
+                    clipY,
+                    12,
+                    7,
+                    currentBrick.x,
+                    currentBrick.y,
+                    brickWidth,
+                    brickHeight
+                )
+            }
+        }
+    }
+
+    function collisionDetection() {
+        for (let c = 0; c < brickColumnCount; c++) {
+            for (let r = 0; r < brickRowCount; r++) {
+                const currentBrick = bricks[c][r]
+                if (currentBrick.status === BRICK_STATUS.DESTROYED) continue
+
+                    const isBallSameXAsBrick =
+                        x > currentBrick.x &&
+                        x < currentBrick.x + brickWidth
+
+                const isBallSameYAsBrick =
+                    y > currentBrick.y &&
+                    y < currentBrick.y + brickHeight
+
+                if (isBallSameXAsBrick && isBallSameYAsBrick) {
+                    dy = -dy
+                    currentBrick.status = BRICK_STATUS.DESTROYED
+            }
+        }
+    }
+}
+
+    function ballMovement() {
+        // Rebotar pelotas en los laterales
+        if (
+            x + dx > canvas.width - ballRadius || // Colision con la pared derecha
+            x + dx < ballRadius // Colision con la pared izquierda
+        ) {
+            dx = -dx
+        }
+
+        // Colision con la pared superior
+        if (y + dy < ballRadius) {
+            dy = -dy
+        }
+
+        // Colision con la pala
+        const isBallSameXAsPaddle =
+            x > paddleX &&
+            x < paddleX + paddleWidth
+
+        const isBallTouchingPaddle =
+            y + dy > paddleY
+
+        if (isBallSameXAsPaddle && isBallTouchingPaddle) {
+            dy = -dy
+        } // Game Over
+        else if (y + dy > canvas.height - ballRadius
+        ) {
+            console.log("Game Over!")
+            document.location.reload()
+        }
+
+        x += dx
+        y += dy
+    }
+    function paddleMovement() {
+        if (rightPressed && paddleX < canvas.width - paddleWidth) {
+            paddleX += PADDLE_SENSITIVITY
+        } else if (leftPressed && paddleX > 0) {
+            paddleX -= PADDLE_SENSITIVITY
+        }
+    }
+
+    function cleanCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    function initEvents() {
+        document.addEventListener('keydown', keyDownHandler)
+        document.addEventListener('keyup', keyUpHandler)
+
+        function keyDownHandler(event) {
+            const { key } = event
+            if (key === 'Right' || key === 'ArrowRight') {
+                rightPressed = true
+            }
+
+            else if (key === 'Left' || key === 'ArrowLeft') {
+                leftPressed = true
+            }
+        }
+
+        function keyUpHandler(event) {
+            const { key } = event
+            if (key === 'Right' || key === 'ArrowRight') {
+                rightPressed = false
+            }
+
+            else if (key === 'Left' || key === 'ArrowLeft') {
+                leftPressed = false
+            }
+        }
+    }
+
+    function draw() {
+        // Limpiar la pantalla por cada frame
+        cleanCanvas()
+        //Dibujar elementos
+        drawBall()
+        drawPaddle()
+        drawBricks()
+        //drawScore()
+
+        //Colisiones y movimientos
+        collisionDetection()
+        ballMovement()
+        paddleMovement()
+
+        window.requestAnimationFrame(draw)
+    }
+
+    draw()
+    initEvents()
+</script>
